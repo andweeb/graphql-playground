@@ -46,6 +46,7 @@ export const defaultSettings: ISettings = {
   'editor.fontSize': 14,
   'editor.reuseHeaders': true,
   'editor.theme': 'dark',
+  'editor.keyMap': 'sublime',
   'general.betaUpdates': false,
   'prettier.printWidth': 80,
   'prettier.tabWidth': 2,

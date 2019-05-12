@@ -10,6 +10,7 @@ import * as React from 'react'
 import { GraphQLSchema } from 'graphql'
 import * as MD from 'markdown-it'
 import { connect } from 'react-redux'
+import { get } from 'lodash'
 import onHasCompletion from './onHasCompletion'
 import { editQuery, setScrollTop } from '../../state/sessions/actions'
 import { createStructuredSelector } from 'reselect'
@@ -19,10 +20,12 @@ import {
   getScrollTop,
   getTabWidth,
   getUseTabs,
+  getKeyMap,
 } from '../../state/sessions/selectors'
 import EditorWrapper from './EditorWrapper'
 import { styled } from '../../styled'
 import { isIframe } from '../../utils'
+import { KeyMap } from '../../types'
 /**
  * QueryEditor
  *
@@ -52,6 +55,7 @@ export interface ReduxProps {
   scrollTop?: number
   tabWidth?: number
   useTabs?: boolean
+  keyMap?: KeyMap
 }
 
 const md = new MD()
@@ -91,6 +95,7 @@ export class QueryEditor extends React.PureComponent<Props & ReduxProps, {}> {
     require('codemirror/addon/dialog/dialog')
     require('codemirror/addon/lint/lint')
     require('codemirror/keymap/sublime')
+    require('codemirror/keymap/emacs')
     require('codemirror/keymap/vim')
     require('codemirror-graphql/hint')
     require('codemirror-graphql/lint')
@@ -110,7 +115,7 @@ export class QueryEditor extends React.PureComponent<Props & ReduxProps, {}> {
       indentWithTabs: this.props.useTabs || false,
       mode: 'graphql',
       theme: 'graphiql',
-      keyMap: 'sublime',
+      keyMap: this.props.keyMap,
       autoCloseBrackets: true,
       matchBrackets: true,
       showCursorWhenSelecting: true,
@@ -270,6 +275,13 @@ export class QueryEditor extends React.PureComponent<Props & ReduxProps, {}> {
     if (code === 86) {
       return
     }
+    // Avoid executing the autocomplete command when using the vim key mappings outside of insert mode
+    if (
+      this.props.keyMap === 'vim' &&
+      !get(this.editor, 'state.vim.insertMode')
+    ) {
+      return
+    }
     if (
       (code >= 65 && code <= 90) || // letters
       (!event.shiftKey && code >= 48 && code <= 57) || // numbers
@@ -312,6 +324,7 @@ const mapStateToProps = createStructuredSelector({
   scrollTop: getScrollTop,
   tabWidth: getTabWidth,
   useTabs: getUseTabs,
+  keyMap: getKeyMap,
 })
 
 export default connect(

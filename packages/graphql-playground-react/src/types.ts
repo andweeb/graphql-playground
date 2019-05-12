@@ -16,12 +16,15 @@ export type Theme = 'dark' | 'light'
 
 export type CursorShape = 'line' | 'block' | 'underline'
 
+export type KeyMap = 'vim' | 'emacs' | 'sublime'
+
 export interface ISettings {
   ['editor.cursorShape']: CursorShape
   ['editor.fontFamily']: string
   ['editor.fontSize']: number
   ['editor.reuseHeaders']: boolean
   ['editor.theme']: Theme
+  ['editor.keyMap']: string
   ['general.betaUpdates']: boolean
   ['prettier.printWidth']: number
   ['prettier.tabWidth']: number

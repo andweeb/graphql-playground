@@ -185,3 +185,16 @@ export const getSessionsArray = createSelector([getSessionsState], state => {
 
   return array
 })
+
+export const getKeyMap = createSelector([getSettings], settings => {
+  const defaultKeyMap = 'sublime'
+
+  try {
+    const json = JSON.parse(settings)
+    return json['editor.keyMap'] || defaultKeyMap
+  } catch (e) {
+    //
+  }
+
+  return defaultKeyMap
+})
